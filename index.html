@@ -6,16 +6,27 @@
   </head>
   <body>
     <div class="container">
-      <nav></nav>
+      <nav>
+        <form id="weatherForm">
+          <label for="location">Search Location:</label>
+          <input type="text" id="location" name="location" required>
+          <button type="submit">Get Weather</button>
+      </form>
+      </nav>
       <div class="content">
         <div id="locationName"></div>
         <div id="locationRegion"></div>
         <div id="locationCountry"></div>
+        <div id="locationTime "></div>
       </div>
       <div>
+        <div id="temperature_c"></div>
         <div id="feelslike"></div>
+        <div id="precipitation_mm"></div>
+        <div id="uv"></div>
+        <div id="wind_kph"></div>
       </div>
     </div>
-    <script src="bundle.js"></script>
+    <script src="bundle.js" defer></script>
   </body>
 </html>
