@@ -2,19 +2,30 @@ import _ from "lodash";
 import "./style.css";
 import { getCurrentWeather, getForecast} from "./weather-data";
 
-getCurrentWeather();
-getForecast();
+let place = 'toronto';
 
-function getLocationData() {
-    return getCurrentWeather().then(data => data ? data.location : null);
+function loadPage() {
+
+    console.log("load page with", place);
+
+    getCurrentWeather(place);
+    getForecast(place);
+    updateDOMWithLocation(place);
+    updateDOMWithCurrentWeather(place);
 }
 
-function getCurrentWeatherData() {
-    return getCurrentWeather().then(data => data ? data.current : null);
+loadPage();
+
+function getLocationData(place) {
+    return getCurrentWeather(place).then(data => data ? data.location : null);
 }
 
-function updateDOMWithLocation() {
-    getLocationData().then(location => {
+function getCurrentWeatherData(place) {
+    return getCurrentWeather(place).then(data => data ? data.current : null);
+}
+
+function updateDOMWithLocation(place) {
+    getLocationData(place).then(location => {
         console.log("Updating DOM with location...", location);
         if (location) {
             document.getElementById('locationName').textContent = `Location Name: ${location.name}`;
@@ -27,8 +38,8 @@ function updateDOMWithLocation() {
     });
 };
 
-function updateDOMWithCurrentWeather() {
-    getCurrentWeatherData().then(current_weather => {
+function updateDOMWithCurrentWeather(place) {
+    getCurrentWeatherData(place).then(current_weather => {
         if (current_weather) {
             document.getElementById('temperature_c').textContent = `Temperature: ${current_weather.temp_c}°C`;
             document.getElementById('feelslike').textContent = `Feels like: ${current_weather.feelslike_c}°C`;
@@ -45,25 +56,21 @@ document.addEventListener("DOMContentLoaded", function() {
     form.addEventListener('submit', async function(event) {
         event.preventDefault(); 
   
-        const locationInput = document.getElementById('location').value;
-        console.log("City entered:", locationInput);
+        const placeInput = document.getElementById('place').value;
+        console.log("City entered:", placeInput);
 
-        let location = locationInput;
-        let currentWeatherURL = 'https://api.weatherapi.com/v1/current.json?key=9d73c117f8704d6c91f235638241604&q=' + location;
-        let forecastURL = 'https://api.weatherapi.com/v1/forecast.json?key=9d73c117f8704d6c91f235638241604&q=' + location + '&days=3';
+        let place = placeInput;
   
         try {
-            await getCurrentWeather(currentWeatherURL);
-            await getForecast(forecastURL);
-            updateDOMWithLocation();
-            updateDOMWithCurrentWeather();
+            console.log("New location:", place);
+            const weatherData = await getCurrentWeather(place)
+            console.log(weatherData);
+            await getCurrentWeather(place);
+            await getForecast(place);
+            updateDOMWithLocation(place);
+            updateDOMWithCurrentWeather(place);
         } catch (error) {
             console.error("Failed to fetch weather data:", error);
         }
-        
     });
-  });
-
-
-updateDOMWithLocation();
-updateDOMWithCurrentWeather();
+});
