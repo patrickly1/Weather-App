@@ -2,10 +2,10 @@ import _ from "lodash";
 import "./style.css";
 import { getCurrentWeather, getForecast} from "./weather-data";
 
-let place = 'toronto';
+//let place = 'toronto';
 
 function loadPage() {
-
+    let place = 'toronto';
     console.log("load page with", place);
 
     getCurrentWeather(place);
@@ -51,6 +51,11 @@ function updateDOMWithCurrentWeather(place) {
     });
 }
 
+function resetDOM() {
+    console.log("Resetting DOM");
+    document.querySelector('.content').textContent = "";
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('weatherForm');
     form.addEventListener('submit', async function(event) {
@@ -69,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
             await getForecast(place);
             updateDOMWithLocation(place);
             updateDOMWithCurrentWeather(place);
+            resetDOM();
         } catch (error) {
             console.error("Failed to fetch weather data:", error);
         }
