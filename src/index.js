@@ -2,8 +2,6 @@ import _ from "lodash";
 import "./style.css";
 import { getCurrentWeather, getForecast} from "./weather-data";
 
-//let place = 'toronto';
-
 function loadPage() {
     let place = 'toronto';
     console.log("load page with", place);
@@ -68,15 +66,17 @@ document.addEventListener("DOMContentLoaded", function() {
   
         try {
             console.log("New location:", place);
-            const weatherData = await getCurrentWeather(place)
-            console.log(weatherData);
-            await getCurrentWeather(place);
-            await getForecast(place);
+
+            const weatherData = await getCurrentWeather(place);
+            const ForecastData = await getForecast(place);
+
+            console.log("weatherdata and forecastdata", weatherData, ForecastData);
+
             updateDOMWithLocation(place);
             updateDOMWithCurrentWeather(place);
             resetDOM();
         } catch (error) {
-            console.error("Failed to fetch weather data:", error);
+            console.error("Event Listener failed", error);
         }
     });
 });
