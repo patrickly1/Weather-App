@@ -28,9 +28,7 @@ function updateDOMWithLocation(place) {
         if (location) {
             document.getElementById('locationName').textContent = `Location Name: ${location.name}`;
             document.getElementById('locationRegion').textContent = `Location Region: ${location.region}`;
-            document.getElementById('locationCountry').textContent = `Location Country: ${location.country}`;
-            document.getElementById('locationTime').textContent = `Location Time: ${location.localtime}`;
-        } else {
+            document.getElementById('locationCountry').textContent = `Location Country: ${location.country}`;        } else {
             console.log("error");
         };
     });
@@ -50,12 +48,11 @@ function updateDOMWithCurrentWeather(place) {
 }
 
 function resetDOM() {
-    blank = "";
+    const blank = "";
     console.log("Resetting DOM");
     document.getElementById('locationName').textContent = blank;
     document.getElementById('locationRegion').textContent = blank;
     document.getElementById('locationCountry').textContent = blank;
-    document.getElementById('locationTime').textContent = blank;
     document.getElementById('temperature_c').textContent = blank;
     document.getElementById('feelslike').textContent = blank;
     document.getElementById('precipitation_mm').textContent = blank;
@@ -82,8 +79,8 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("weatherdata and forecastdata", weatherData, ForecastData);
 
             resetDOM();
-            updateDOMWithLocation(weatherData.location);
-            updateDOMWithCurrentWeather(weatherData.current);
+            updateDOMWithLocation(place);
+            updateDOMWithCurrentWeather(place);
         } catch (error) {
             console.error("Event Listener failed", error);
         }
