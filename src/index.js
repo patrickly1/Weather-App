@@ -1,6 +1,6 @@
 import _ from "lodash";
 import "./style.css";
-import { getCurrentWeather, getForecast} from "./weather-data";
+import { getCurrentWeather, getForecast } from "./weather-data";
 
 function loadPage() {
     let place = 'toronto';
@@ -50,8 +50,17 @@ function updateDOMWithCurrentWeather(place) {
 }
 
 function resetDOM() {
+    blank = "";
     console.log("Resetting DOM");
-    document.querySelector('.content').textContent = "";
+    document.getElementById('locationName').textContent = blank;
+    document.getElementById('locationRegion').textContent = blank;
+    document.getElementById('locationCountry').textContent = blank;
+    document.getElementById('locationTime').textContent = blank;
+    document.getElementById('temperature_c').textContent = blank;
+    document.getElementById('feelslike').textContent = blank;
+    document.getElementById('precipitation_mm').textContent = blank;
+    document.getElementById('uv').textContent = blank;
+    document.getElementById('wind_kph').textContent = blank;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -72,9 +81,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
             console.log("weatherdata and forecastdata", weatherData, ForecastData);
 
-            updateDOMWithLocation(place);
-            updateDOMWithCurrentWeather(place);
             resetDOM();
+            updateDOMWithLocation(weatherData.location);
+            updateDOMWithCurrentWeather(weatherData.current);
         } catch (error) {
             console.error("Event Listener failed", error);
         }

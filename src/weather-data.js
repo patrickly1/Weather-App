@@ -6,8 +6,10 @@ async function getCurrentWeather(location) {
   try {
     const response = await fetch(currentWeatherURL, {mode: 'cors'});
     const weatherData = await response.json();
+
     console.log(weatherData, currentWeatherURL);
-    return weatherData
+
+    return weatherData;
   } catch (error) {
     console.log('Failed to fetch weather data:', error);
   };
@@ -19,6 +21,9 @@ async function getForecast(location) {
   try {
     const response = await fetch(forecastURL, {mode: 'cors'});
     const weatherData = await response.json();
+
+    console.log(weatherData, currentWeatherURL);
+
     return weatherData;
   } catch (error) {
     console.log('Failed to fetch weather data:', error);
