@@ -10,6 +10,7 @@ function loadPage() {
     getForecast(place);
     updateDOMWithLocation(place);
     updateDOMWithCurrentWeather(place);
+    updateDOMWithForecast(place);
 }
 
 loadPage();
@@ -20,6 +21,10 @@ function getLocationData(place) {
 
 function getCurrentWeatherData(place) {
     return getCurrentWeather(place).then(data => data ? data.current : null);
+}
+
+function getForecastData(place) {
+    return getForecast(place).then(data => data ? data.forecast : null);
 }
 
 function updateDOMWithLocation(place) {
@@ -45,6 +50,15 @@ function updateDOMWithCurrentWeather(place) {
         }
         
     });
+}
+
+function updateDOMWithForecast(place) {
+    getForecastData(place).then(forecast => {
+        if (forecast) {
+            document.getElementById('day0').textContent = `Day 0: ${forecast.forecastday[0]}`;
+            console.log("forecastday0", forecast.forecastday[0]);
+        }
+    })
 }
 
 function resetDOM() {
@@ -81,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
             resetDOM();
             updateDOMWithLocation(place);
             updateDOMWithCurrentWeather(place);
+            updateDOMWithForecast(place);
         } catch (error) {
             console.error("Event Listener failed", error);
         }
