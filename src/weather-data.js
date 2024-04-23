@@ -16,13 +16,13 @@ async function getCurrentWeather(location) {
 };
 
 async function getForecast(location) {
-  const forecastURL = forecastURL = `https://api.weatherapi.com/v1/forecast.json?key=9d73c117f8704d6c91f235638241604&q=${location}&days=3`; 
+  const forecastURL = `https://api.weatherapi.com/v1/forecast.json?key=9d73c117f8704d6c91f235638241604&q=${location}&days=3`; 
   
   try {
     const response = await fetch(forecastURL, {mode: 'cors'});
     const weatherData = await response.json();
 
-    console.log(weatherData, currentWeatherURL);
+    console.log(weatherData, forecastURL);
 
     return weatherData;
   } catch (error) {
