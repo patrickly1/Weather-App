@@ -2,15 +2,18 @@ import _ from "lodash";
 import "./style.css";
 import { getCurrentWeather, getForecast } from "./weather-data";
 
+let currentTemperatureUnit = "C";
+
 function loadPage() {
     let place = 'toronto';
     console.log("load page with", place);
 
     getCurrentWeather(place);
     getForecast(place);
-    updateDOMWithLocation(place);
-    updateDOMWithCurrentWeather(place);
-    updateDOMWithForecast(place);
+    updateWeatherData();
+    //updateDOMWithLocation(place);
+    //updateDOMWithCurrentWeather(place);
+    //updateDOMWithForecast(place);
 }
 
 loadPage();
@@ -42,13 +45,15 @@ function updateDOMWithLocation(place) {
 function updateDOMWithCurrentWeather(place) {
     getCurrentWeatherData(place).then(current_weather => {
         if (current_weather) {
-            document.getElementById('temperature_c').textContent = `Temperature: ${current_weather.temp_c}°C`;
-            document.getElementById('feelslike').textContent = `Feels like: ${current_weather.feelslike_c}°C`;
+            const temperature = currentTemperatureUnit === 'C' ? current_weather.temp_c: current_weather.temp_f; 
+            const feelsLike = currentTemperatureUnit === 'C' ? current_weather.feelslike_c: current_weather.feelslike_f;
+            console.log(temperature, feelsLike, currentTemperatureUnit);
+            document.getElementById('temperatureId').textContent = `Temperature: ${temperature}°${currentTemperatureUnit}`;
+            document.getElementById('feelsLikeId').textContent = `Feels like: ${feelsLike}°${currentTemperatureUnit}`;
             document.getElementById('precipitation_mm').textContent = `Precipitation: ${current_weather.precip_mm}mm`;
             document.getElementById('uv').textContent = `UV: ${current_weather.uv}`;
             document.getElementById('wind_kph').textContent = `Wind: ${current_weather.wind_kph}kph ${current_weather.wind_dir}`;
-        }
-        
+        }    
     });
 }
 
@@ -67,8 +72,8 @@ function resetDOM() {
     document.getElementById('locationName').textContent = blank;
     document.getElementById('locationRegion').textContent = blank;
     document.getElementById('locationCountry').textContent = blank;
-    document.getElementById('temperature_c').textContent = blank;
-    document.getElementById('feelslike').textContent = blank;
+    document.getElementById('temperatureId').textContent = blank;
+    document.getElementById('feelsLikeId').textContent = blank;
     document.getElementById('precipitation_mm').textContent = blank;
     document.getElementById('uv').textContent = blank;
     document.getElementById('wind_kph').textContent = blank;
@@ -92,12 +97,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
             console.log("weatherdata and forecastdata", weatherData, ForecastData);
 
-            resetDOM();
-            updateDOMWithLocation(place);
-            updateDOMWithCurrentWeather(place);
-            updateDOMWithForecast(place);
+            updateWeatherData();
+            //resetDOM();
+            //updateDOMWithLocation(place);
+            //updateDOMWithCurrentWeather(place);
+            //updateDOMWithForecast(place);
         } catch (error) {
             console.error("Event Listener failed", error);
         }
     });
 });
+
+document.getElementById("unitToggle").addEventListener("click", function () {
+    currentTemperatureUnit = currentTemperatureUnit === 'C' ? 'F' : 'C';
+    updateWeatherData();
+});
+
+async function updateWeatherData() {
+    let place = document.getElementById('place').value;
+
+    if (!place) {
+        place = 'toronto';
+    }
+    resetDOM();
+    updateDOMWithLocation(place);
+    updateDOMWithCurrentWeather(place);
+    updateDOMWithForecast(place);
+}
