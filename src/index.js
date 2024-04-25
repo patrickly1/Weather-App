@@ -85,16 +85,6 @@ function updateDOMWithForecast(place) {
             forecast.forecastday[0].hour.concat(forecast.forecastday[1].hour);
             console.log("hourly forecast", next24HoursForecast);
 
-            //unit toggle
-            //const temperature = currentTemperatureUnit === 'C' ?
-            //current_weather.temp_c: current_weather.temp_f; 
-            //const feelsLike = currentTemperatureUnit === 'C' ?
-            //current_weather.feelslike_c: current_weather.feelslike_f;
-            //const precipitation = currentDistanceUnit === "mm" ? 
-            //current_weather.precip_mm: current_weather.precip_in;
-            //const wind = currentSpeedUnit === "kph" ?
-            //current_weather.wind_kph: current_weather.wind_mph;
-
             for (let i = 0; i < 24; i++) {
                 //Convert units
                 const hourlyTemperature = currentTemperatureUnit === 'C' ? 
@@ -130,18 +120,60 @@ function updateDOMWithForecast(place) {
                 hourlyTemperatureElement.textContent = 
                 `${hourlyTemperature}°${currentTemperatureUnit}`;
                 hourlyPrecipitationElement.textContent = 
-                `${hourlyPrecipitation}°${currentDistanceUnit}`;
+                `${hourlyPrecipitation} ${currentDistanceUnit}`;
                 hourlyWindElement.textContent = 
-                `${hourlyWind}°${currentSpeedUnit}`;
+                `${hourlyWind} ${currentSpeedUnit}`;
 
                 hourElement.appendChild(hourlyTimeElement)
                 hourElement.appendChild(hourlyTemperatureElement);
                 hourElement.appendChild(hourlyPrecipitationElement);
                 hourElement.appendChild(hourlyWindElement);
                 hourlyForecastContainer.appendChild(hourElement);
-            }
-        }
-    })
+            };
+        };
+    });
+};
+
+function updateDOMWithTwilight(place) {
+    getForecastData(place).then(forecast => {
+        if (forecast) {
+            document.getElementById('sunriseId').textContent = `Sunrise: ${forecast.forecastday[0].astro.sunrise}`; 
+            document.getElementById('sunsetId').textContent = `Sunset: ${forecast.forecastday[0].astro.sunset}`; 
+            console.log(forecast.forecastday[0].astro);
+        };
+    });
+};
+
+function updateDOMWithWeeklyForecast(place) {
+    getForecastData(place).then(forecast => {
+        if (forecast) {
+            const avgtemp = currentTemperatureUnit === 'C' ?
+            forecast.forecastday[1].day.avgtemp_c:
+            forecast.forecastday[1].day.avgtemp_f;
+
+            const maxtemp = currentTemperatureUnit === 'C' ?
+            forecast.forecastday[1].day.maxtemp_c:
+            forecast.forecastday[1].day.maxtemp_f;
+
+            const mintemp = currentTemperatureUnit === 'C' ?
+            forecast.forecastday[1].day.mintemp_c:
+            forecast.forecastday[1].day.mintemp_f;
+
+            console.log(forecast.forecastday[1].date);
+            document.getElementById("day1Date").textContent = 
+            `Next day: ${forecast.forecastday[1].date}`; 
+            document.getElementById('day1AvgTemperature').textContent = 
+            `Average Temperature: ${avgtemp}°${currentTemperatureUnit}`;  
+            document.getElementById('day1MaxTemperature').textContent = 
+            `High: ${maxtemp}°${currentTemperatureUnit}`;  
+            document.getElementById('day1MinTemperature').textContent = 
+            `Low: ${mintemp}°${currentTemperatureUnit}`;  
+            document.getElementById('day1Condition').textContent = 
+            `Weather Condition: ${forecast.forecastday[1].day.condition.text}`;  
+            document.getElementById('day1ChanceOfRain').textContent = 
+            `Chance of Rain: ${forecast.forecastday[1].day.daily_chance_of_rain}%`;  
+        };
+    });
 }
 
 function resetDOM() {
@@ -157,6 +189,21 @@ function resetDOM() {
     document.getElementById('uv').textContent = blank;
     document.getElementById('wind_Id').textContent = blank;
     document.getElementById('hourlyForecastContainer').textContent = blank;
+    document.getElementById('sunriseId').textContent = blank;
+    document.getElementById('sunsetId').textContent = blank;
+    document.getElementById('day1Date').textContent = blank;
+    document.getElementById('day1AvgTemperature').textContent = blank;
+    document.getElementById('day1MaxTemperature').textContent = blank;
+    document.getElementById('day1MinTemperature').textContent = blank;
+    document.getElementById('day1Condition').textContent = blank;
+    document.getElementById('day1ChanceOfRain').textContent = blank;    
+    document.getElementById('day2Date').textContent = blank;
+    document.getElementById('day2AvgTemperature').textContent = blank;
+    document.getElementById('day2MaxTemperature').textContent = blank;
+    document.getElementById('day2MinTemperature').textContent = blank;
+    document.getElementById('day2Condition').textContent = blank;
+    document.getElementById('day2ChanceOfRain').textContent = blank;
+
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -201,4 +248,6 @@ async function updateWeatherData() {
     updateDOMWithLocation(place);
     updateDOMWithCurrentWeather(place);
     updateDOMWithForecast(place);
+    updateDOMWithTwilight(place);
+    updateDOMWithWeeklyForecast(place);
 }
