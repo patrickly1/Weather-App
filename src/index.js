@@ -3,6 +3,8 @@ import "./style.css";
 import { getCurrentWeather, getForecast } from "./weather-data";
 
 let currentTemperatureUnit = "C";
+let currentDistanceUnit = "mm";
+let currentSpeedUnit = "kph";
 
 function loadPage() {
     let place = 'toronto';
@@ -11,9 +13,6 @@ function loadPage() {
     getCurrentWeather(place);
     getForecast(place);
     updateWeatherData();
-    //updateDOMWithLocation(place);
-    //updateDOMWithCurrentWeather(place);
-    //updateDOMWithForecast(place);
 }
 
 loadPage();
@@ -35,8 +34,8 @@ function updateDOMWithLocation(place) {
         console.log("Updating DOM with location...", location);
         if (location) {
             document.getElementById('locationName').textContent = `Location Name: ${location.name}`;
-            document.getElementById('locationRegion').textContent = `Location Region: ${location.region}`;
-            document.getElementById('locationCountry').textContent = `Location Country: ${location.country}`;        } else {
+            document.getElementById('locationCountry').textContent = `Location Country: ${location.country}`;
+        } else {
             console.log("error");
         };
     });
@@ -45,14 +44,25 @@ function updateDOMWithLocation(place) {
 function updateDOMWithCurrentWeather(place) {
     getCurrentWeatherData(place).then(current_weather => {
         if (current_weather) {
-            const temperature = currentTemperatureUnit === 'C' ? current_weather.temp_c: current_weather.temp_f; 
-            const feelsLike = currentTemperatureUnit === 'C' ? current_weather.feelslike_c: current_weather.feelslike_f;
+            const temperature = currentTemperatureUnit === 'C' ?
+            current_weather.temp_c: current_weather.temp_f; 
+            const feelsLike = currentTemperatureUnit === 'C' ?
+            current_weather.feelslike_c: current_weather.feelslike_f;
+            const precipitation = currentDistanceUnit === "mm" ? 
+            current_weather.precip_mm: current_weather.precip_in;
+            const wind = currentSpeedUnit === "kph" ?
+            current_weather.wind_kph: current_weather.wind_mph;
+
             console.log(temperature, feelsLike, currentTemperatureUnit);
-            document.getElementById('temperatureId').textContent = `Temperature: ${temperature}°${currentTemperatureUnit}`;
-            document.getElementById('feelsLikeId').textContent = `Feels like: ${feelsLike}°${currentTemperatureUnit}`;
-            document.getElementById('precipitation_mm').textContent = `Precipitation: ${current_weather.precip_mm}mm`;
+            document.getElementById('temperatureId').textContent = 
+            `Temperature: ${temperature}°${currentTemperatureUnit}`;
+            document.getElementById('feelsLikeId').textContent = `
+            Feels like: ${feelsLike}°${currentTemperatureUnit}`;
+            document.getElementById('precipitation_Id').textContent = 
+            `Precipitation: ${precipitation} ${currentDistanceUnit}`;
             document.getElementById('uv').textContent = `UV: ${current_weather.uv}`;
-            document.getElementById('wind_kph').textContent = `Wind: ${current_weather.wind_kph}kph ${current_weather.wind_dir}`;
+            document.getElementById('wind_Id').textContent = 
+            `Wind: ${wind} ${currentSpeedUnit} ${current_weather.wind_dir}`;
         }    
     });
 }
@@ -70,13 +80,12 @@ function resetDOM() {
     const blank = "";
     console.log("Resetting DOM");
     document.getElementById('locationName').textContent = blank;
-    document.getElementById('locationRegion').textContent = blank;
     document.getElementById('locationCountry').textContent = blank;
     document.getElementById('temperatureId').textContent = blank;
     document.getElementById('feelsLikeId').textContent = blank;
-    document.getElementById('precipitation_mm').textContent = blank;
+    document.getElementById('precipitation_Id').textContent = blank;
     document.getElementById('uv').textContent = blank;
-    document.getElementById('wind_kph').textContent = blank;
+    document.getElementById('wind_Id').textContent = blank;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -98,10 +107,6 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("weatherdata and forecastdata", weatherData, ForecastData);
 
             updateWeatherData();
-            //resetDOM();
-            //updateDOMWithLocation(place);
-            //updateDOMWithCurrentWeather(place);
-            //updateDOMWithForecast(place);
         } catch (error) {
             console.error("Event Listener failed", error);
         }
@@ -110,6 +115,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.getElementById("unitToggle").addEventListener("click", function () {
     currentTemperatureUnit = currentTemperatureUnit === 'C' ? 'F' : 'C';
+    currentDistanceUnit = currentDistanceUnit === 'mm' ? 'in' : 'mm';
+    currentSpeedUnit = currentSpeedUnit === 'kph' ? 'mph' : 'kph';
     updateWeatherData();
 });
 
