@@ -78,18 +78,66 @@ function updateDOMWithForecast(place) {
             const hourlyForecastContainer = document.getElementById('hourlyForecastContainer');
             hourlyForecastContainer.textContent = "";
 
-            let nextHour = (parseInt(localTime.split(':')[0]) + 1 ) % 24;
+            let nextHour = parseInt(localTime.split(':')[0]) + 1;
             console.log('localtime', localTime, 'nextHour', nextHour); 
 
             const next24HoursForecast = 
             forecast.forecastday[0].hour.concat(forecast.forecastday[1].hour);
-            console.log("hourly forecast", forecast.forecastday[0].hour);
+            console.log("hourly forecast", next24HoursForecast);
+
+            //unit toggle
+            //const temperature = currentTemperatureUnit === 'C' ?
+            //current_weather.temp_c: current_weather.temp_f; 
+            //const feelsLike = currentTemperatureUnit === 'C' ?
+            //current_weather.feelslike_c: current_weather.feelslike_f;
+            //const precipitation = currentDistanceUnit === "mm" ? 
+            //current_weather.precip_mm: current_weather.precip_in;
+            //const wind = currentSpeedUnit === "kph" ?
+            //current_weather.wind_kph: current_weather.wind_mph;
 
             for (let i = 0; i < 24; i++) {
-                const hourlyTemperature = next24HoursForecast[i].temp_c;
+                //Convert units
+                const hourlyTemperature = currentTemperatureUnit === 'C' ? 
+                next24HoursForecast[i + nextHour].temp_c:
+                next24HoursForecast[i + nextHour].temp_f;
+
+                const hourlyPrecipitation = currentDistanceUnit === 'mm' ?
+                next24HoursForecast[i + nextHour].precip_mm:
+                next24HoursForecast[i + nextHour].precip_in;
+
+                const hourlyWind = currentDistanceUnit === 'kph' ?
+                next24HoursForecast[i + nextHour].wind_kph:
+                next24HoursForecast[i + nextHour].wind_mph;
+
+                //create Elements for each hour, hourly temperature, hourly precipitation, 
+                //and hourly wind
                 const hourElement = document.createElement('div');
                 hourElement.id = `hour${i}`;
-                hourElement.textContent = `Hour ${i}: ${hourlyTemperature}C`;
+
+                const hourlyTimeElement = document.createElement('div');
+                hourlyTimeElement.id = `hour${i}Time`;
+
+                const hourlyTemperatureElement = document.createElement('div');
+                hourlyTemperatureElement.id = `hour${i}Temperature`;
+
+                const hourlyPrecipitationElement = document.createElement('div');
+                hourlyPrecipitationElement.id = `hour${i}Precipitation`;
+
+                const hourlyWindElement = document.createElement('div');
+                hourlyWindElement.id = `hour${i}Wind`;
+
+                hourlyTimeElement.textContent = `${(i + nextHour) % 24}:00`
+                hourlyTemperatureElement.textContent = 
+                `${hourlyTemperature}°${currentTemperatureUnit}`;
+                hourlyPrecipitationElement.textContent = 
+                `${hourlyPrecipitation}°${currentDistanceUnit}`;
+                hourlyWindElement.textContent = 
+                `${hourlyWind}°${currentSpeedUnit}`;
+
+                hourElement.appendChild(hourlyTimeElement)
+                hourElement.appendChild(hourlyTemperatureElement);
+                hourElement.appendChild(hourlyPrecipitationElement);
+                hourElement.appendChild(hourlyWindElement);
                 hourlyForecastContainer.appendChild(hourElement);
             }
         }
@@ -108,6 +156,7 @@ function resetDOM() {
     document.getElementById('precipitation_Id').textContent = blank;
     document.getElementById('uv').textContent = blank;
     document.getElementById('wind_Id').textContent = blank;
+    document.getElementById('hourlyForecastContainer').textContent = blank;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
