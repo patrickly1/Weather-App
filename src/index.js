@@ -5,6 +5,7 @@ import { getCurrentWeather, getForecast } from "./weather-data";
 let currentTemperatureUnit = "C";
 let currentDistanceUnit = "mm";
 let currentSpeedUnit = "kph";
+let localTime;
 
 function loadPage() {
     let place = 'toronto';
@@ -35,6 +36,10 @@ function updateDOMWithLocation(place) {
         if (location) {
             document.getElementById('locationName').textContent = `Location Name: ${location.name}`;
             document.getElementById('locationCountry').textContent = `Location Country: ${location.country}`;
+            const [locationDate, locationTime] = location.localtime.split(' ');
+            localTime = locationTime;
+            document.getElementById('localDate').textContent = `Local Date: ${locationDate}`;
+            document.getElementById('localTime').textContent = `Local Time: ${locationTime}`;
         } else {
             console.log("error");
         };
@@ -70,8 +75,23 @@ function updateDOMWithCurrentWeather(place) {
 function updateDOMWithForecast(place) {
     getForecastData(place).then(forecast => {
         if (forecast) {
-            document.getElementById('day0').textContent = `Day 0: ${forecast.forecastday[0]}`;
-            console.log("forecastday0", forecast.forecastday[0]);
+            const hourlyForecastContainer = document.getElementById('hourlyForecastContainer');
+            hourlyForecastContainer.textContent = "";
+
+            let nextHour = (parseInt(localTime.split(':')[0]) + 1 ) % 24;
+            console.log('localtime', localTime, 'nextHour', nextHour); 
+
+            const next24HoursForecast = 
+            forecast.forecastday[0].hour.concat(forecast.forecastday[1].hour);
+            console.log("hourly forecast", forecast.forecastday[0].hour);
+
+            for (let i = 0; i < 24; i++) {
+                const hourlyTemperature = next24HoursForecast[i].temp_c;
+                const hourElement = document.createElement('div');
+                hourElement.id = `hour${i}`;
+                hourElement.textContent = `Hour ${i}: ${hourlyTemperature}C`;
+                hourlyForecastContainer.appendChild(hourElement);
+            }
         }
     })
 }
@@ -81,6 +101,8 @@ function resetDOM() {
     console.log("Resetting DOM");
     document.getElementById('locationName').textContent = blank;
     document.getElementById('locationCountry').textContent = blank;
+    document.getElementById('localDate').textContent = blank;
+    document.getElementById('localTime').textContent = blank;
     document.getElementById('temperatureId').textContent = blank;
     document.getElementById('feelsLikeId').textContent = blank;
     document.getElementById('precipitation_Id').textContent = blank;
