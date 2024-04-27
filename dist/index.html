@@ -8,45 +8,51 @@
     <div class="container">
       <nav>
         <form id="weatherForm">
-          <label for="place">Search Location:</label>
-          <input type="text" id="place" name="place" required>
+          
+          <input type="text" id="place" name="place" placeholder="Search Location" required>
           <button type="submit">Get Weather</button>
       </form>
       <button id="unitToggle">Toggle Unit</button>
       </nav>
       <div class="content">
-        <div id="locationName"></div>
-        <div id="locationCountry"></div>
-        <div id="localDate"></div>
-        <div id="localTime"></div>
-      </div>
-      <div>
-        <div id="temperatureId"></div>
-        <div id="feelsLikeId"></div>
-        <div id="precipitation_Id"></div>
-        <div id="uv"></div>
-        <div id="wind_Id"></div>
-      </div>
-      <div>
-        <div id="sunriseId"></div>
-        <div id="sunsetId"></div>
+        <div class="weather-info">
+          <div id="locationName" class="info-item"></div>
+          <div id="locationCountry" class="info-item"></div>
+          <div id="localDate" class="info-item"></div>
+          <div id="localTime" class="info-item"></div>
+        </div>
+        
+        <div class="weather-info">
+          <div id="day0WeatherConditionId" class="info-item"></div>
+          <div id="temperatureId" class="info-item"></div>
+          <div id="feelsLikeId" class="info-item"></div>
+          <div id="precipitation_Id" class="info-item"></div>
+          <div id="uv" class="info-item"></div>
+          <div id="wind_Id" class="info-item"></div>
+          <div id="sunriseId" class="info-item"></div>
+          <div id="sunsetId" class="info-item"></div>
+        </div>
       </div>
       <div id="weeklyForecast">
-        <div id="day1">
-          <div id="day1Date"></div>            
-          <div id="day1AvgTemperature"></div>            
-          <div id="day1MaxTemperature"></div>            
-          <div id="day1MinTemperature"></div>            
-          <div id="day1Condition"></div>            
-          <div id="day1ChanceOfRain"></div>
+        <div class="day-forecast">
+          <div id="day1">
+            <div id="day1Date"></div>            
+            <div id="day1AvgTemperature"></div>            
+            <div id="day1MaxTemperature"></div>            
+            <div id="day1MinTemperature"></div>            
+            <div id="day1Condition"></div>            
+            <div id="day1ChanceOfRain"></div>
+          </div>
         </div>
-        <div id="day2">
-          <div id="day2Date"></div>
-          <div id="day2AvgTemperature"></div>            
-          <div id="day2MaxTemperature"></div>            
-          <div id="day2MinTemperature"></div>            
-          <div id="day2Condition"></div>            
-          <div id="day2ChanceOfRain"></div>            
+        <div class="day-forecast">
+          <div id="day2">
+            <div id="day2Date"></div>
+            <div id="day2AvgTemperature"></div>            
+            <div id="day2MaxTemperature"></div>            
+            <div id="day2MinTemperature"></div>            
+            <div id="day2Condition"></div>            
+            <div id="day2ChanceOfRain"></div>            
+          </div>
         </div>
       </div>
       <div>

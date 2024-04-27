@@ -34,12 +34,12 @@ function updateDOMWithLocation(place) {
     getLocationData(place).then(location => {
         console.log("Updating DOM with location...", location);
         if (location) {
-            document.getElementById('locationName').textContent = `Location Name: ${location.name}`;
-            document.getElementById('locationCountry').textContent = `Location Country: ${location.country}`;
+            document.getElementById('locationName').textContent = `${location.name}`;
+            document.getElementById('locationCountry').textContent = `${location.country}`;
             const [locationDate, locationTime] = location.localtime.split(' ');
             localTime = locationTime;
-            document.getElementById('localDate').textContent = `Local Date: ${locationDate}`;
-            document.getElementById('localTime').textContent = `Local Time: ${locationTime}`;
+            document.getElementById('localDate').textContent = `${locationDate}`;
+            document.getElementById('localTime').textContent = `${locationTime}`;
         } else {
             console.log("error");
         };
@@ -107,8 +107,14 @@ function updateDOMWithForecast(place) {
                 const hourlyTimeElement = document.createElement('div');
                 hourlyTimeElement.id = `hour${i}Time`;
 
+                const hourlyWeatherConditionElement = document.createElement('div');
+                hourlyWeatherConditionElement.id = `hour${i}WeatherCondition`;
+
                 const hourlyTemperatureElement = document.createElement('div');
                 hourlyTemperatureElement.id = `hour${i}Temperature`;
+
+                const hourlyChanceOfRainElement = document.createElement('div');
+                hourlyChanceOfRainElement.id = `hour${i}ChanceofRain`
 
                 const hourlyPrecipitationElement = document.createElement('div');
                 hourlyPrecipitationElement.id = `hour${i}Precipitation`;
@@ -116,16 +122,29 @@ function updateDOMWithForecast(place) {
                 const hourlyWindElement = document.createElement('div');
                 hourlyWindElement.id = `hour${i}Wind`;
 
-                hourlyTimeElement.textContent = `${(i + nextHour) % 24}:00`
+                hourlyTimeElement.textContent = `${(i + nextHour) % 24}:00`;
+
+                hourlyWeatherConditionElement.textContent =
+                `${next24HoursForecast[i].condition.text}`;
+
                 hourlyTemperatureElement.textContent = 
                 `${hourlyTemperature}°${currentTemperatureUnit}`;
-                hourlyPrecipitationElement.textContent = 
-                `${hourlyPrecipitation} ${currentDistanceUnit}`;
+
+                hourlyChanceOfRainElement.textContent = 
+                `${next24HoursForecast[i].chance_of_rain}%`;
+
+                if (next24HoursForecast[i].chance_of_rain > 0) {
+                    hourlyPrecipitationElement.textContent = 
+                    `${hourlyPrecipitation} ${currentDistanceUnit}`;
+                }
+
                 hourlyWindElement.textContent = 
                 `${hourlyWind} ${currentSpeedUnit}`;
 
-                hourElement.appendChild(hourlyTimeElement)
+                hourElement.appendChild(hourlyTimeElement);
+                hourElement.appendChild(hourlyWeatherConditionElement);
                 hourElement.appendChild(hourlyTemperatureElement);
+                hourElement.appendChild(hourlyChanceOfRainElement);
                 hourElement.appendChild(hourlyPrecipitationElement);
                 hourElement.appendChild(hourlyWindElement);
                 hourlyForecastContainer.appendChild(hourElement);
@@ -147,15 +166,19 @@ function updateDOMWithTwilight(place) {
 function updateDOMWithWeeklyForecast(place) {
     getForecastData(place).then(forecast => {
         if (forecast) {
-            const avgtemp = currentTemperatureUnit === 'C' ?
+            //Adding current day weather condition here
+            document.getElementById('day0WeatherConditionId').textContent =
+            `Weather Condition: ${forecast.forecastday[0].day.condition.text}`
+
+            const avgTempDay1 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[1].day.avgtemp_c:
             forecast.forecastday[1].day.avgtemp_f;
 
-            const maxtemp = currentTemperatureUnit === 'C' ?
+            const maxTempDay1 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[1].day.maxtemp_c:
             forecast.forecastday[1].day.maxtemp_f;
 
-            const mintemp = currentTemperatureUnit === 'C' ?
+            const minTempDay1 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[1].day.mintemp_c:
             forecast.forecastday[1].day.mintemp_f;
 
@@ -163,15 +186,41 @@ function updateDOMWithWeeklyForecast(place) {
             document.getElementById("day1Date").textContent = 
             `Next day: ${forecast.forecastday[1].date}`; 
             document.getElementById('day1AvgTemperature').textContent = 
-            `Average Temperature: ${avgtemp}°${currentTemperatureUnit}`;  
+            `Average Temperature: ${avgTempDay1}°${currentTemperatureUnit}`;  
             document.getElementById('day1MaxTemperature').textContent = 
-            `High: ${maxtemp}°${currentTemperatureUnit}`;  
+            `High: ${maxTempDay1}°${currentTemperatureUnit}`;  
             document.getElementById('day1MinTemperature').textContent = 
-            `Low: ${mintemp}°${currentTemperatureUnit}`;  
+            `Low: ${minTempDay1}°${currentTemperatureUnit}`;  
             document.getElementById('day1Condition').textContent = 
             `Weather Condition: ${forecast.forecastday[1].day.condition.text}`;  
             document.getElementById('day1ChanceOfRain').textContent = 
-            `Chance of Rain: ${forecast.forecastday[1].day.daily_chance_of_rain}%`;  
+            `Chance of Rain: ${forecast.forecastday[1].day.daily_chance_of_rain}%`;             
+            
+            const avgTempDay2 = currentTemperatureUnit === 'C' ?
+            forecast.forecastday[2].day.avgtemp_c:
+            forecast.forecastday[2].day.avgtemp_f;
+
+            const maxTempDay2 = currentTemperatureUnit === 'C' ?
+            forecast.forecastday[2].day.maxtemp_c:
+            forecast.forecastday[2].day.maxtemp_f;
+
+            const minTempDay2 = currentTemperatureUnit === 'C' ?
+            forecast.forecastday[2].day.mintemp_c:
+            forecast.forecastday[2].day.mintemp_f;
+
+            console.log(forecast.forecastday[2].date);
+            document.getElementById("day2Date").textContent = 
+            `Day 2: ${forecast.forecastday[1].date}`; 
+            document.getElementById('day2AvgTemperature').textContent = 
+            `Average Temperature: ${avgTempDay2}°${currentTemperatureUnit}`;  
+            document.getElementById('day2MaxTemperature').textContent = 
+            `High: ${maxTempDay2}°${currentTemperatureUnit}`;  
+            document.getElementById('day2MinTemperature').textContent = 
+            `Low: ${minTempDay2}°${currentTemperatureUnit}`;  
+            document.getElementById('day2Condition').textContent = 
+            `Weather Condition: ${forecast.forecastday[2].day.condition.text}`;  
+            document.getElementById('day2ChanceOfRain').textContent = 
+            `Chance of Rain: ${forecast.forecastday[2].day.daily_chance_of_rain}%`;  
         };
     });
 }
