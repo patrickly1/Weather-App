@@ -92,7 +92,19 @@ body {
   .content > div {
     margin-bottom: 10px;
   }
-  
+
+  #temperatureId {
+    display: flex;
+    align-items: center;
+  }
+
+  #temperatureId > img {
+    filter: invert(100%);
+    width: 20px;
+    height: 20px;
+    margin-right: 5px; 
+  }
+    
   #weeklyForecast {
     display: flex;
     justify-content: space-between;

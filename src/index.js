@@ -1,6 +1,7 @@
 import _ from "lodash";
 import "./style.css";
 import { getCurrentWeather, getForecast } from "./weather-data";
+import thermometerIcon from './images/thermometer.svg';
 
 let currentTemperatureUnit = "C";
 let currentDistanceUnit = "mm";
@@ -58,14 +59,24 @@ function updateDOMWithCurrentWeather(place) {
             const wind = currentSpeedUnit === "kph" ?
             current_weather.wind_kph: current_weather.wind_mph;
 
+            const myThermometerIcon = new Image();
+            myThermometerIcon.src = thermometerIcon;
+
             console.log(temperature, feelsLike, currentTemperatureUnit);
-            document.getElementById('temperatureId').textContent = 
-            `Temperature: ${temperature}°${currentTemperatureUnit}`;
+
+            const temperatureContainer = document.getElementById('temperatureId');
+            temperatureContainer.textContent = `Temperature: `;
+            temperatureContainer.appendChild(myThermometerIcon); // Append the image element
+            temperatureContainer.insertAdjacentHTML('beforeend', `${temperature}°${currentTemperatureUnit}`);
+
             document.getElementById('feelsLikeId').textContent = `
             Feels like: ${feelsLike}°${currentTemperatureUnit}`;
+
             document.getElementById('precipitation_Id').textContent = 
             `Precipitation: ${precipitation} ${currentDistanceUnit}`;
+
             document.getElementById('uv').textContent = `UV: ${current_weather.uv}`;
+
             document.getElementById('wind_Id').textContent = 
             `Wind: ${wind} ${currentSpeedUnit} ${current_weather.wind_dir}`;
         }    
