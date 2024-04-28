@@ -98,7 +98,7 @@ body {
     justify-content: space-between;
     margin-bottom: 20px;
   }
-  
+   
   .day-forecast {
     flex: 1;
     padding: 20px;
@@ -114,19 +114,40 @@ body {
     color: #fff;
   }
   
+  #day1Date, #day2Date {
+    font-size: 28px;
+  }
+
   #hourlyForecastContainer {
     display: flex;
     overflow-x: auto;
   }
   
   #hourlyForecastContainer > div {
-    flex-shrink: 0;
+    flex: 0 0 auto; /* Prevent flex items from growing or shrinking */
+    width: 100px; /* Set a fixed width for each hourly element */
+    height: 220px; /* Set a fixed height for each hourly element */
     padding: 10px;
     margin-right: 10px;
-    background-color: rgba(0, 123, 255, 0.2);
+    background-color: #007bff;/* rgba(0, 123, 255, 0.2);  */
     border-radius: 4px;
+    display: flex; /* Use flexbox for vertical alignment */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: space-between; /* Distribute space evenly */
   }
   
+  #hourlyForecastContainer > div > * {
+    /* Allow text to wrap */
+    white-space: normal;
+    /* Ensure text doesn't overflow horizontally */
+    overflow-wrap: break-word;
+  }
+
+  #hourlyForecastContainer > div > div[id^="hour"][id$="WeatherCondition"] {
+    height: 20px; /* Adjust height as needed */
+    overflow: hidden; /* Hide any overflow */
+  }
+
   #hourlyForecastContainer > div:last-child {
     margin-right: 0;
   }

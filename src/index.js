@@ -147,7 +147,7 @@ function updateDOMWithForecast(place) {
                 }
 
                 hourlyWindElement.textContent = 
-                `${hourlyWind} ${currentSpeedUnit}`;
+                `${hourlyWind} ${currentSpeedUnit} ${next24HoursForecast[i].wind_dir}`;
 
                 hourElement.appendChild(hourlyTimeElement);
                 hourElement.appendChild(hourlyWeatherConditionElement);
@@ -177,7 +177,7 @@ function updateDOMWithWeeklyForecast(place) {
         if (forecast) {
             //Adding current day weather condition here
             document.getElementById('day0WeatherConditionId').textContent =
-            `Weather Condition: ${forecast.forecastday[0].day.condition.text}`;     
+            `${forecast.forecastday[0].day.condition.text}`;     
             
             //Add weather icon
             const iconUrl = 'https:' + forecast.forecastday[0].day.condition.icon;
@@ -211,7 +211,7 @@ function updateDOMWithWeeklyForecast(place) {
             document.getElementById('day1MinTemperature').textContent = 
             `Low: ${minTempDay1}°${currentTemperatureUnit}`;  
             document.getElementById('day1Condition').textContent = 
-            `Weather Condition: ${forecast.forecastday[1].day.condition.text}`;  
+            `${forecast.forecastday[1].day.condition.text}`;  
             document.getElementById('day1ChanceOfRain').textContent = 
             `Chance of Rain: ${forecast.forecastday[1].day.daily_chance_of_rain}%`;  
 
@@ -252,7 +252,7 @@ function updateDOMWithWeeklyForecast(place) {
             document.getElementById('day2MinTemperature').textContent = 
             `Low: ${minTempDay2}°${currentTemperatureUnit}`;  
             document.getElementById('day2Condition').textContent = 
-            `Weather Condition: ${forecast.forecastday[2].day.condition.text}`;  
+            `${forecast.forecastday[2].day.condition.text}`;  
             document.getElementById('day2ChanceOfRain').textContent = 
             `Chance of Rain: ${forecast.forecastday[2].day.daily_chance_of_rain}%`;  
         };
@@ -274,6 +274,12 @@ function resetDOM() {
     document.getElementById('hourlyForecastContainer').textContent = blank;
     document.getElementById('sunriseId').textContent = blank;
     document.getElementById('sunsetId').textContent = blank;
+    document.getElementById('day0WeatherConditionId').textContent = blank;
+    document.getElementById('day0WeatherIconId').textContent = blank;    
+    document.getElementById('day1Condition').textContent = blank;
+    document.getElementById('day1WeatherIconId').textContent = blank;    
+    document.getElementById('day2Condition').textContent = blank;
+    document.getElementById('day2WeatherIconId').textContent = blank;
     document.getElementById('day1Date').textContent = blank;
     document.getElementById('day1AvgTemperature').textContent = blank;
     document.getElementById('day1MaxTemperature').textContent = blank;
