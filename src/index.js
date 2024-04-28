@@ -38,7 +38,7 @@ function updateDOMWithLocation(place) {
             document.getElementById('locationCountry').textContent = `${location.country}`;
             const [locationDate, locationTime] = location.localtime.split(' ');
             localTime = locationTime;
-            document.getElementById('localDate').textContent = `${locationDate}`;
+            document.getElementById('localDate').textContent = `${convertDate(locationDate)}`;
             document.getElementById('localTime').textContent = `${locationTime}`;
         } else {
             console.log("error");
@@ -109,6 +109,9 @@ function updateDOMWithForecast(place) {
 
                 const hourlyWeatherConditionElement = document.createElement('div');
                 hourlyWeatherConditionElement.id = `hour${i}WeatherCondition`;
+                
+                const hourlyWeatherIconElement = document.createElement('div');
+                hourlyWeatherConditionElement.id = `hour${i}WeatherIcon`;
 
                 const hourlyTemperatureElement = document.createElement('div');
                 hourlyTemperatureElement.id = `hour${i}Temperature`;
@@ -127,6 +130,11 @@ function updateDOMWithForecast(place) {
                 hourlyWeatherConditionElement.textContent =
                 `${next24HoursForecast[i].condition.text}`;
 
+                const hourlyIconUrl = 'https:' + next24HoursForecast[i].condition.icon;
+                const hourlyIconElement = document.createElement('img');
+                hourlyIconElement.src = hourlyIconUrl;
+                hourlyWeatherIconElement.appendChild(hourlyIconElement);
+
                 hourlyTemperatureElement.textContent = 
                 `${hourlyTemperature}°${currentTemperatureUnit}`;
 
@@ -143,6 +151,7 @@ function updateDOMWithForecast(place) {
 
                 hourElement.appendChild(hourlyTimeElement);
                 hourElement.appendChild(hourlyWeatherConditionElement);
+                hourElement.appendChild(hourlyWeatherIconElement);
                 hourElement.appendChild(hourlyTemperatureElement);
                 hourElement.appendChild(hourlyChanceOfRainElement);
                 hourElement.appendChild(hourlyPrecipitationElement);
@@ -168,7 +177,17 @@ function updateDOMWithWeeklyForecast(place) {
         if (forecast) {
             //Adding current day weather condition here
             document.getElementById('day0WeatherConditionId').textContent =
-            `Weather Condition: ${forecast.forecastday[0].day.condition.text}`
+            `Weather Condition: ${forecast.forecastday[0].day.condition.text}`;     
+            
+            //Add weather icon
+            const iconUrl = 'https:' + forecast.forecastday[0].day.condition.icon;
+            console.log("iconurl TEST", iconUrl);
+            const iconElement = document.createElement('img');
+            iconElement.src = iconUrl;
+            
+
+            document.getElementById("day0WeatherIconId").appendChild(iconElement);
+
 
             const avgTempDay1 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[1].day.avgtemp_c:
@@ -184,7 +203,7 @@ function updateDOMWithWeeklyForecast(place) {
 
             console.log(forecast.forecastday[1].date);
             document.getElementById("day1Date").textContent = 
-            `Next day: ${forecast.forecastday[1].date}`; 
+            `${convertDate(forecast.forecastday[1].date)}`; 
             document.getElementById('day1AvgTemperature').textContent = 
             `Average Temperature: ${avgTempDay1}°${currentTemperatureUnit}`;  
             document.getElementById('day1MaxTemperature').textContent = 
@@ -194,7 +213,22 @@ function updateDOMWithWeeklyForecast(place) {
             document.getElementById('day1Condition').textContent = 
             `Weather Condition: ${forecast.forecastday[1].day.condition.text}`;  
             document.getElementById('day1ChanceOfRain').textContent = 
-            `Chance of Rain: ${forecast.forecastday[1].day.daily_chance_of_rain}%`;             
+            `Chance of Rain: ${forecast.forecastday[1].day.daily_chance_of_rain}%`;  
+
+
+            const iconUrlDay1 = 'https:' + forecast.forecastday[1].day.condition.icon;
+            const iconDay1Element = document.createElement('img');
+            iconDay1Element.src = iconUrlDay1;
+            
+
+            document.getElementById("day1WeatherIconId").appendChild(iconDay1Element);
+            
+            const iconUrlDay2 = 'https:' + forecast.forecastday[2].day.condition.icon;
+            const iconDay2Element = document.createElement('img');
+            iconDay2Element.src = iconUrlDay2;
+            
+
+            document.getElementById("day2WeatherIconId").appendChild(iconDay2Element);
             
             const avgTempDay2 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[2].day.avgtemp_c:
@@ -210,7 +244,7 @@ function updateDOMWithWeeklyForecast(place) {
 
             console.log(forecast.forecastday[2].date);
             document.getElementById("day2Date").textContent = 
-            `Day 2: ${forecast.forecastday[1].date}`; 
+            `${convertDate(forecast.forecastday[1].date)}`; 
             document.getElementById('day2AvgTemperature').textContent = 
             `Average Temperature: ${avgTempDay2}°${currentTemperatureUnit}`;  
             document.getElementById('day2MaxTemperature').textContent = 
@@ -299,4 +333,18 @@ async function updateWeatherData() {
     updateDOMWithForecast(place);
     updateDOMWithTwilight(place);
     updateDOMWithWeeklyForecast(place);
+}
+
+function convertDate(dateInput) {
+    const date = new Date(dateInput)
+
+    // Format the date using toLocaleDateString() method
+    const formattedDate = date.toLocaleDateString("en-US", {
+        weekday: "long", // Display full weekday name
+        month: "long",   // Display full month name
+        day: "numeric",  // Display day of the month
+        year: "numeric"  // Display full year
+    });
+
+    return formattedDate;
 }

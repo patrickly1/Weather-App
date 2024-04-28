@@ -4,12 +4,19 @@ body {
     color: #fff;
     margin: 0;
     padding: 0;
+    display: flex; /* Use flexbox */
+    min-height: 100vh; /* Set minimum height of the body to 100% of viewport height */
+    align-items: stretch; /* Stretch items to fill the container vertically */
   }
   
   .container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    flex: 1; /* Take up remaining space */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: space-between; /* Center items vertically */
   }
   
   nav {
