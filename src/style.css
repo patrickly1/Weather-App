@@ -98,6 +98,10 @@ body {
     align-items: center;
   }
 
+  #feelsLikeId {
+    color: #929292;
+  }
+
   #temperatureId > img,
   #precipitation_Id > img,
   #day0ChanceofRain > img,

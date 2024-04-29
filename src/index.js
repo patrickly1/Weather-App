@@ -16,8 +16,8 @@ let currentSpeedUnit = "kph";
 let localTime;
 
 function loadPage() {
+    //Assume the location is Toronto, until the user changes the location
     let place = 'toronto';
-    console.log("load page with", place);
 
     getCurrentWeather(place);
     getForecast(place);
@@ -40,10 +40,10 @@ function getForecastData(place) {
 
 function updateDOMWithLocation(place) {
     getLocationData(place).then(location => {
-        console.log("Updating DOM with location...", location);
         if (location) {
             document.getElementById('locationName').textContent = `${location.name}`;
             document.getElementById('locationCountry').textContent = `${location.country}`;
+            //Split localtime string to get date and time
             const [locationDate, locationTime] = location.localtime.split(' ');
             localTime = locationTime;
             document.getElementById('localDate').textContent = `${convertDate(locationDate)}`;
@@ -57,6 +57,7 @@ function updateDOMWithLocation(place) {
 function updateDOMWithCurrentWeather(place) {
     getCurrentWeatherData(place).then(current_weather => {
         if (current_weather) {
+            //Check current units
             const temperature = currentTemperatureUnit === 'C' ?
             current_weather.temp_c: current_weather.temp_f; 
             const feelsLike = currentTemperatureUnit === 'C' ?
@@ -66,19 +67,21 @@ function updateDOMWithCurrentWeather(place) {
             const wind = currentSpeedUnit === "kph" ?
             current_weather.wind_kph: current_weather.wind_mph;
 
+            //Get thermometer image for average temperature
             const myThermometerIcon = new Image();
             myThermometerIcon.src = thermometerIcon;
 
-            console.log(temperature, feelsLike, currentTemperatureUnit);
-
+            //Place avg temperature with the correct units after the thermometer icon
             const temperatureContainer = document.getElementById('temperatureId');
             temperatureContainer.textContent = ``;
             temperatureContainer.appendChild(myThermometerIcon); // Append the image element
             temperatureContainer.insertAdjacentHTML('beforeend', `${temperature}°${currentTemperatureUnit}`);
 
+            //Feels-like temperature
             document.getElementById('feelsLikeId').textContent = `
-            Feels like: ${feelsLike}°${currentTemperatureUnit}`;
+            Feels like ${feelsLike}°${currentTemperatureUnit}`;
 
+            //Precipitation
             const myWaterIcon = new Image();
             myWaterIcon.src = waterIcon;
 
@@ -87,8 +90,10 @@ function updateDOMWithCurrentWeather(place) {
             precipitationContainer.appendChild(myWaterIcon); // Append the water icon
             precipitationContainer.appendChild(document.createTextNode(`${precipitation} ${currentDistanceUnit}`)); // Append the precipitation text
 
+            //UV
             document.getElementById('uv').textContent = `UV: ${current_weather.uv}`;
 
+            //Wind and direction
             const myWindIcon = new Image();
             myWindIcon.src = windIcon;
 
@@ -106,15 +111,16 @@ function updateDOMWithForecast(place) {
             const hourlyForecastContainer = document.getElementById('hourlyForecastContainer');
             hourlyForecastContainer.textContent = "";
 
+            //Use the next hour of the local ltime as the first hour reported in the hourly forecast
             let nextHour = parseInt(localTime.split(':')[0]) + 1;
-            console.log('localtime', localTime, 'nextHour', nextHour); 
 
+            //Concat the current day with tomorrow's hourly forecast to get 24 hours 
+            //of forecast from the next hour of the local time
             const next24HoursForecast = 
             forecast.forecastday[0].hour.concat(forecast.forecastday[1].hour);
-            console.log("hourly forecast", next24HoursForecast);
 
             for (let i = 0; i < 24; i++) {
-                //Convert units
+                //Update current units
                 const hourlyTemperature = currentTemperatureUnit === 'C' ? 
                 next24HoursForecast[i + nextHour].temp_c:
                 next24HoursForecast[i + nextHour].temp_f;
@@ -128,7 +134,7 @@ function updateDOMWithForecast(place) {
                 next24HoursForecast[i + nextHour].wind_mph;
 
                 //create Elements for each hour, hourly temperature, hourly precipitation, 
-                //and hourly wind
+                //and hourly wind. Add class for CSS purposes
                 const hourElement = document.createElement('div');
                 hourElement.id = `hour${i}`;
 
@@ -158,16 +164,20 @@ function updateDOMWithForecast(place) {
                 hourlyWindElement.id = `hour${i}Wind`;
                 hourlyWindElement.classList.add('hourlyWindClass')
 
+                //Hour
                 hourlyTimeElement.textContent = `${(i + nextHour) % 24}:00`;
 
+                //Condition
                 hourlyWeatherConditionElement.textContent =
                 `${next24HoursForecast[i].condition.text}`;
 
+                //Get weather condition icon from API
                 const hourlyIconUrl = 'https:' + next24HoursForecast[i].condition.icon;
                 const hourlyIconElement = document.createElement('img');
                 hourlyIconElement.src = hourlyIconUrl;
                 hourlyWeatherIconElement.appendChild(hourlyIconElement);
 
+                //temperature
                 const myThermometerIcon = new Image();
                 myThermometerIcon.src = thermometerIcon;
 
@@ -175,6 +185,7 @@ function updateDOMWithForecast(place) {
                 hourlyTemperatureElement.appendChild(myThermometerIcon); // Append the image element
                 hourlyTemperatureElement.insertAdjacentHTML('beforeend', `${hourlyTemperature}°${currentTemperatureUnit}`);
 
+                //chance of rain
                 const myRainIcon = new Image();
                 myRainIcon.src = rainIcon
 
@@ -182,18 +193,18 @@ function updateDOMWithForecast(place) {
                 hourlyChanceOfRainElement.appendChild(myRainIcon); // Append the image element
                 hourlyChanceOfRainElement.insertAdjacentHTML('beforeend', `${next24HoursForecast[i].chance_of_rain}%`);
 
-                //hourlyChanceOfRainElement.textContent = 
-                //`${next24HoursForecast[i].chance_of_rain}%`;
-
+                //Only show precipitation if there is a chance of rain
                 if (next24HoursForecast[i].chance_of_rain > 0) {
                     const myWaterIcon = new Image();
                     myWaterIcon.src = waterIcon;
 
+                    //precipitation
                     hourlyPrecipitationElement.textContent = ``;
                     hourlyPrecipitationElement.appendChild(myWaterIcon); // Append the image element
                     hourlyPrecipitationElement.insertAdjacentHTML('beforeend', `${hourlyPrecipitation} ${currentDistanceUnit}`);
                 }
 
+                //wind
                 const myWindIcon = new Image();
                 myWindIcon.src = windIcon;
 
@@ -201,9 +212,7 @@ function updateDOMWithForecast(place) {
                 hourlyWindElement.appendChild(myWindIcon); // Append the image element
                 hourlyWindElement.insertAdjacentHTML('beforeend', `${hourlyWind} ${currentSpeedUnit} ${next24HoursForecast[i].wind_dir}`);
 
-                //hourlyWindElement.textContent = 
-                //`${hourlyWind} ${currentSpeedUnit} ${next24HoursForecast[i].wind_dir}`;
-
+                //apend all the hourly elements to the hourlyForecastContainer
                 hourElement.appendChild(hourlyTimeElement);
                 hourElement.appendChild(hourlyWeatherConditionElement);
                 hourElement.appendChild(hourlyWeatherIconElement);
@@ -220,6 +229,7 @@ function updateDOMWithForecast(place) {
 function updateDOMWithTwilight(place) {
     getForecastData(place).then(forecast => {
         if (forecast) {
+            //sunrise
             const mySunriseIcon = new Image();
             mySunriseIcon.src = sunriseIcon;
 
@@ -228,6 +238,7 @@ function updateDOMWithTwilight(place) {
             sunriseContainer.appendChild(mySunriseIcon); // Append the water icon
             sunriseContainer.appendChild(document.createTextNode(`${forecast.forecastday[0].astro.sunrise}`)); // Append the precipitation text
 
+            //sunset
             const mySunsetIcon = new Image();
             mySunsetIcon.src = sunsetIcon;
 
@@ -235,9 +246,6 @@ function updateDOMWithTwilight(place) {
             sunsetContainer.textContent = ""; // Clear existing content
             sunsetContainer.appendChild(mySunsetIcon); // Append the water icon
             sunsetContainer.appendChild(document.createTextNode(`${forecast.forecastday[0].astro.sunset}`)); // Append the precipitation text
-            //document.getElementById('sunriseId').textContent = `Sunrise: ${forecast.forecastday[0].astro.sunrise}`; 
-            //document.getElementById('sunsetId').textContent = `Sunset: ${forecast.forecastday[0].astro.sunset}`; 
-            //console.log(forecast.forecastday[0].astro);
         };
     });
 };
@@ -266,6 +274,7 @@ function updateDOMWithWeeklyForecast(place) {
             
             document.getElementById("day0WeatherIconId").appendChild(iconElement);
 
+            //get current units
             const avgTempDay1 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[1].day.avgtemp_c:
             forecast.forecastday[1].day.avgtemp_f;
@@ -278,11 +287,11 @@ function updateDOMWithWeeklyForecast(place) {
             forecast.forecastday[1].day.mintemp_c:
             forecast.forecastday[1].day.mintemp_f;
 
-            console.log(forecast.forecastday[1].date);
-
+            //tomorrow's date
             document.getElementById("day1Date").textContent = 
             `${convertDate(forecast.forecastday[1].date)}`; 
 
+            //tomorrow's temperature
             const myThermometerIcon2 = new Image();
             myThermometerIcon2.src = thermometerIcon;
 
@@ -291,6 +300,7 @@ function updateDOMWithWeeklyForecast(place) {
             temperatureContainer.appendChild(myThermometerIcon2); // Append the image element
             temperatureContainer.insertAdjacentHTML('beforeend', `${avgTempDay1}°${currentTemperatureUnit}`);
 
+            //tomorrow's high temperature
             const myThermometerHighIcon = new Image();
             myThermometerHighIcon.src = thermometerHighIcon;
 
@@ -299,6 +309,7 @@ function updateDOMWithWeeklyForecast(place) {
             temperatureHighDay1Container.appendChild(myThermometerHighIcon); // Append the image element
             temperatureHighDay1Container.insertAdjacentHTML('beforeend', `${maxTempDay1}°${currentTemperatureUnit}`);
 
+            //tomorrow's low temperature
             const myThermometerLowIcon = new Image();
             myThermometerLowIcon.src = thermometerLowIcon;
 
@@ -307,10 +318,11 @@ function updateDOMWithWeeklyForecast(place) {
             temperatureLowDay1Container.appendChild(myThermometerLowIcon); // Append the image element
             temperatureLowDay1Container.insertAdjacentHTML('beforeend', `${minTempDay1}°${currentTemperatureUnit}`);
 
-
+            //tomorrow's weather condition
             document.getElementById('day1Condition').textContent = 
             `${forecast.forecastday[1].day.condition.text}`;  
 
+            //tomorrow's chance of rain
             const myRainIcon2 = new Image();
             myRainIcon2.src = rainIcon;
 
@@ -319,20 +331,20 @@ function updateDOMWithWeeklyForecast(place) {
             day1ChanceofRainContainer.appendChild(myRainIcon2); // Append the water icon
             day1ChanceofRainContainer.appendChild(document.createTextNode(`${forecast.forecastday[1].day.daily_chance_of_rain}%`)); // Append the precipitation text
 
+            //get the next two day's weather condition icon from API
             const iconUrlDay1 = 'https:' + forecast.forecastday[1].day.condition.icon;
             const iconDay1Element = document.createElement('img');
             iconDay1Element.src = iconUrlDay1;
             
-
             document.getElementById("day1WeatherIconId").appendChild(iconDay1Element);
             
             const iconUrlDay2 = 'https:' + forecast.forecastday[2].day.condition.icon;
             const iconDay2Element = document.createElement('img');
             iconDay2Element.src = iconUrlDay2;
-            
 
             document.getElementById("day2WeatherIconId").appendChild(iconDay2Element);
             
+            //Repeat everything for day 2
             const avgTempDay2 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[2].day.avgtemp_c:
             forecast.forecastday[2].day.avgtemp_f;
@@ -390,16 +402,13 @@ function updateDOMWithWeeklyForecast(place) {
             day2ChanceofRainContainer.textContent = ""; // Clear existing content
             day2ChanceofRainContainer.appendChild(myRainIcon3); // Append the water icon
             day2ChanceofRainContainer.appendChild(document.createTextNode(`${forecast.forecastday[2].day.daily_chance_of_rain}%`)); // Append the precipitation text
-            
-            //document.getElementById('day2ChanceOfRain').textContent = 
-            //`Chance of Rain: ${forecast.forecastday[2].day.daily_chance_of_rain}%`;  
         };
     });
 }
 
 function resetDOM() {
     const blank = "";
-    console.log("Resetting DOM");
+    //Reset everything in the event that the unit or location gets changed to acccess the API again
     document.getElementById('locationName').textContent = blank;
     document.getElementById('locationCountry').textContent = blank;
     document.getElementById('localDate').textContent = blank;
@@ -431,10 +440,10 @@ function resetDOM() {
     document.getElementById('day2MinTemperature').textContent = blank;
     document.getElementById('day2Condition').textContent = blank;
     document.getElementById('day2ChanceOfRain').textContent = blank;
-
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    //Create a form to allow users to input a location to observe its weather forecast
     const form = document.getElementById('weatherForm');
     form.addEventListener('submit', async function(event) {
         event.preventDefault(); 
@@ -460,6 +469,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.getElementById("unitToggle").addEventListener("click", function () {
+    //If the button gets clicked, all units will be converted from metric to imperial
     currentTemperatureUnit = currentTemperatureUnit === 'C' ? 'F' : 'C';
     currentDistanceUnit = currentDistanceUnit === 'mm' ? 'in' : 'mm';
     currentSpeedUnit = currentSpeedUnit === 'kph' ? 'mph' : 'kph';
@@ -467,6 +477,7 @@ document.getElementById("unitToggle").addEventListener("click", function () {
 });
 
 async function updateWeatherData() {
+    //Perform all the functions together to update the page with the correct information
     let place = document.getElementById('place').value;
 
     if (!place) {
@@ -481,6 +492,7 @@ async function updateWeatherData() {
 }
 
 function convertDate(dateInput) {
+    //The API provides the date in YYYY-MM-DD, so this will convert the date format
     const date = new Date(dateInput)
 
     // Format the date using toLocaleDateString() method
