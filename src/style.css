@@ -98,7 +98,10 @@ body {
     align-items: center;
   }
 
-  #temperatureId > img {
+  #temperatureId > img,
+  #precipitation_Id > img,
+  #day0ChanceofRain > img,
+  #wind_Id > img {
     filter: invert(100%);
     width: 20px;
     height: 20px;

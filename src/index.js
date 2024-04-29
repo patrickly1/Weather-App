@@ -2,6 +2,9 @@ import _ from "lodash";
 import "./style.css";
 import { getCurrentWeather, getForecast } from "./weather-data";
 import thermometerIcon from './images/thermometer.svg';
+import waterIcon from './images/water.svg';
+import rainIcon from './images/weather-pouring.svg'
+import windIcon from './images/weather-windy.svg'
 
 let currentTemperatureUnit = "C";
 let currentDistanceUnit = "mm";
@@ -65,20 +68,30 @@ function updateDOMWithCurrentWeather(place) {
             console.log(temperature, feelsLike, currentTemperatureUnit);
 
             const temperatureContainer = document.getElementById('temperatureId');
-            temperatureContainer.textContent = `Temperature: `;
+            temperatureContainer.textContent = ``;
             temperatureContainer.appendChild(myThermometerIcon); // Append the image element
             temperatureContainer.insertAdjacentHTML('beforeend', `${temperature}°${currentTemperatureUnit}`);
 
             document.getElementById('feelsLikeId').textContent = `
             Feels like: ${feelsLike}°${currentTemperatureUnit}`;
 
-            document.getElementById('precipitation_Id').textContent = 
-            `Precipitation: ${precipitation} ${currentDistanceUnit}`;
+            const myWaterIcon = new Image();
+            myWaterIcon.src = waterIcon;
+
+            const precipitationContainer = document.getElementById('precipitation_Id');
+            precipitationContainer.textContent = ""; // Clear existing content
+            precipitationContainer.appendChild(myWaterIcon); // Append the water icon
+            precipitationContainer.appendChild(document.createTextNode(`Precipitation: ${precipitation} ${currentDistanceUnit}`)); // Append the precipitation text
 
             document.getElementById('uv').textContent = `UV: ${current_weather.uv}`;
 
-            document.getElementById('wind_Id').textContent = 
-            `Wind: ${wind} ${currentSpeedUnit} ${current_weather.wind_dir}`;
+            const myWindIcon = new Image();
+            myWindIcon.src = windIcon;
+
+            const windContainer = document.getElementById('wind_Id');
+            windContainer.textContent = ""; // Clear existing content
+            windContainer.appendChild(myWindIcon); // Append the water icon
+            windContainer.appendChild(document.createTextNode(`${wind} ${currentSpeedUnit} ${current_weather.wind_dir}`)); // Append the precipitation text
         }    
     });
 }
@@ -189,7 +202,16 @@ function updateDOMWithWeeklyForecast(place) {
             //Adding current day weather condition here
             document.getElementById('day0WeatherConditionId').textContent =
             `${forecast.forecastday[0].day.condition.text}`;     
-            
+
+            //Add chance of rain icon
+            const myRainIcon = new Image();
+            myRainIcon.src = rainIcon;
+
+            const day0ChanceofRainContainer = document.getElementById('day0ChanceofRain');
+            day0ChanceofRainContainer.textContent = ""; // Clear existing content
+            day0ChanceofRainContainer.appendChild(myRainIcon); // Append the water icon
+            day0ChanceofRainContainer.appendChild(document.createTextNode(`${forecast.forecastday[0].day.daily_chance_of_rain}%`)); // Append the precipitation text
+                        
             //Add weather icon
             const iconUrl = 'https:' + forecast.forecastday[0].day.condition.icon;
             console.log("iconurl TEST", iconUrl);
@@ -287,6 +309,7 @@ function resetDOM() {
     document.getElementById('sunsetId').textContent = blank;
     document.getElementById('day0WeatherConditionId').textContent = blank;
     document.getElementById('day0WeatherIconId').textContent = blank;    
+    document.getElementById('day0ChanceofRain').textContent = blank;    
     document.getElementById('day1Condition').textContent = blank;
     document.getElementById('day1WeatherIconId').textContent = blank;    
     document.getElementById('day2Condition').textContent = blank;
