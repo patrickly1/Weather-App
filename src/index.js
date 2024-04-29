@@ -3,8 +3,12 @@ import "./style.css";
 import { getCurrentWeather, getForecast } from "./weather-data";
 import thermometerIcon from './images/thermometer.svg';
 import waterIcon from './images/water.svg';
-import rainIcon from './images/weather-pouring.svg'
-import windIcon from './images/weather-windy.svg'
+import rainIcon from './images/weather-pouring.svg';
+import windIcon from './images/weather-windy.svg';
+import sunriseIcon from './images/weather-sunset-up.svg';
+import sunsetIcon from './images/weather-sunset-down.svg';
+import thermometerHighIcon from './images/thermometer-high.svg';
+import thermometerLowIcon from './images/thermometer-low.svg';
 
 let currentTemperatureUnit = "C";
 let currentDistanceUnit = "mm";
@@ -81,7 +85,7 @@ function updateDOMWithCurrentWeather(place) {
             const precipitationContainer = document.getElementById('precipitation_Id');
             precipitationContainer.textContent = ""; // Clear existing content
             precipitationContainer.appendChild(myWaterIcon); // Append the water icon
-            precipitationContainer.appendChild(document.createTextNode(`Precipitation: ${precipitation} ${currentDistanceUnit}`)); // Append the precipitation text
+            precipitationContainer.appendChild(document.createTextNode(`${precipitation} ${currentDistanceUnit}`)); // Append the precipitation text
 
             document.getElementById('uv').textContent = `UV: ${current_weather.uv}`;
 
@@ -133,21 +137,26 @@ function updateDOMWithForecast(place) {
 
                 const hourlyWeatherConditionElement = document.createElement('div');
                 hourlyWeatherConditionElement.id = `hour${i}WeatherCondition`;
+                hourlyWeatherConditionElement.classList.add('hourlyWeatherCondition');
                 
                 const hourlyWeatherIconElement = document.createElement('div');
                 hourlyWeatherConditionElement.id = `hour${i}WeatherIcon`;
 
                 const hourlyTemperatureElement = document.createElement('div');
                 hourlyTemperatureElement.id = `hour${i}Temperature`;
+                hourlyTemperatureElement.classList.add('hourlyTemperatureClass')
 
                 const hourlyChanceOfRainElement = document.createElement('div');
-                hourlyChanceOfRainElement.id = `hour${i}ChanceofRain`
+                hourlyChanceOfRainElement.id = `hour${i}ChanceofRain`;
+                hourlyChanceOfRainElement.classList.add('hourlyChanceOfRainClass')
 
                 const hourlyPrecipitationElement = document.createElement('div');
                 hourlyPrecipitationElement.id = `hour${i}Precipitation`;
+                hourlyPrecipitationElement.classList.add('hourlyPrecipitationClass');
 
                 const hourlyWindElement = document.createElement('div');
                 hourlyWindElement.id = `hour${i}Wind`;
+                hourlyWindElement.classList.add('hourlyWindClass')
 
                 hourlyTimeElement.textContent = `${(i + nextHour) % 24}:00`;
 
@@ -159,19 +168,41 @@ function updateDOMWithForecast(place) {
                 hourlyIconElement.src = hourlyIconUrl;
                 hourlyWeatherIconElement.appendChild(hourlyIconElement);
 
-                hourlyTemperatureElement.textContent = 
-                `${hourlyTemperature}°${currentTemperatureUnit}`;
+                const myThermometerIcon = new Image();
+                myThermometerIcon.src = thermometerIcon;
 
-                hourlyChanceOfRainElement.textContent = 
-                `${next24HoursForecast[i].chance_of_rain}%`;
+                hourlyTemperatureElement.textContent = ``;
+                hourlyTemperatureElement.appendChild(myThermometerIcon); // Append the image element
+                hourlyTemperatureElement.insertAdjacentHTML('beforeend', `${hourlyTemperature}°${currentTemperatureUnit}`);
+
+                const myRainIcon = new Image();
+                myRainIcon.src = rainIcon
+
+                hourlyChanceOfRainElement.textContent = ``;
+                hourlyChanceOfRainElement.appendChild(myRainIcon); // Append the image element
+                hourlyChanceOfRainElement.insertAdjacentHTML('beforeend', `${next24HoursForecast[i].chance_of_rain}%`);
+
+                //hourlyChanceOfRainElement.textContent = 
+                //`${next24HoursForecast[i].chance_of_rain}%`;
 
                 if (next24HoursForecast[i].chance_of_rain > 0) {
-                    hourlyPrecipitationElement.textContent = 
-                    `${hourlyPrecipitation} ${currentDistanceUnit}`;
+                    const myWaterIcon = new Image();
+                    myWaterIcon.src = waterIcon;
+
+                    hourlyPrecipitationElement.textContent = ``;
+                    hourlyPrecipitationElement.appendChild(myWaterIcon); // Append the image element
+                    hourlyPrecipitationElement.insertAdjacentHTML('beforeend', `${hourlyPrecipitation} ${currentDistanceUnit}`);
                 }
 
-                hourlyWindElement.textContent = 
-                `${hourlyWind} ${currentSpeedUnit} ${next24HoursForecast[i].wind_dir}`;
+                const myWindIcon = new Image();
+                myWindIcon.src = windIcon;
+
+                hourlyWindElement.textContent = ``;
+                hourlyWindElement.appendChild(myWindIcon); // Append the image element
+                hourlyWindElement.insertAdjacentHTML('beforeend', `${hourlyWind} ${currentSpeedUnit} ${next24HoursForecast[i].wind_dir}`);
+
+                //hourlyWindElement.textContent = 
+                //`${hourlyWind} ${currentSpeedUnit} ${next24HoursForecast[i].wind_dir}`;
 
                 hourElement.appendChild(hourlyTimeElement);
                 hourElement.appendChild(hourlyWeatherConditionElement);
@@ -189,9 +220,24 @@ function updateDOMWithForecast(place) {
 function updateDOMWithTwilight(place) {
     getForecastData(place).then(forecast => {
         if (forecast) {
-            document.getElementById('sunriseId').textContent = `Sunrise: ${forecast.forecastday[0].astro.sunrise}`; 
-            document.getElementById('sunsetId').textContent = `Sunset: ${forecast.forecastday[0].astro.sunset}`; 
-            console.log(forecast.forecastday[0].astro);
+            const mySunriseIcon = new Image();
+            mySunriseIcon.src = sunriseIcon;
+
+            const sunriseContainer = document.getElementById('sunriseId');
+            sunriseContainer.textContent = ""; // Clear existing content
+            sunriseContainer.appendChild(mySunriseIcon); // Append the water icon
+            sunriseContainer.appendChild(document.createTextNode(`${forecast.forecastday[0].astro.sunrise}`)); // Append the precipitation text
+
+            const mySunsetIcon = new Image();
+            mySunsetIcon.src = sunsetIcon;
+
+            const sunsetContainer = document.getElementById('sunsetId');
+            sunsetContainer.textContent = ""; // Clear existing content
+            sunsetContainer.appendChild(mySunsetIcon); // Append the water icon
+            sunsetContainer.appendChild(document.createTextNode(`${forecast.forecastday[0].astro.sunset}`)); // Append the precipitation text
+            //document.getElementById('sunriseId').textContent = `Sunrise: ${forecast.forecastday[0].astro.sunrise}`; 
+            //document.getElementById('sunsetId').textContent = `Sunset: ${forecast.forecastday[0].astro.sunset}`; 
+            //console.log(forecast.forecastday[0].astro);
         };
     });
 };
@@ -218,9 +264,7 @@ function updateDOMWithWeeklyForecast(place) {
             const iconElement = document.createElement('img');
             iconElement.src = iconUrl;
             
-
             document.getElementById("day0WeatherIconId").appendChild(iconElement);
-
 
             const avgTempDay1 = currentTemperatureUnit === 'C' ?
             forecast.forecastday[1].day.avgtemp_c:
@@ -235,19 +279,45 @@ function updateDOMWithWeeklyForecast(place) {
             forecast.forecastday[1].day.mintemp_f;
 
             console.log(forecast.forecastday[1].date);
+
             document.getElementById("day1Date").textContent = 
             `${convertDate(forecast.forecastday[1].date)}`; 
-            document.getElementById('day1AvgTemperature').textContent = 
-            `Average Temperature: ${avgTempDay1}°${currentTemperatureUnit}`;  
-            document.getElementById('day1MaxTemperature').textContent = 
-            `High: ${maxTempDay1}°${currentTemperatureUnit}`;  
-            document.getElementById('day1MinTemperature').textContent = 
-            `Low: ${minTempDay1}°${currentTemperatureUnit}`;  
+
+            const myThermometerIcon2 = new Image();
+            myThermometerIcon2.src = thermometerIcon;
+
+            const temperatureContainer = document.getElementById('day1AvgTemperature');
+            temperatureContainer.textContent = ``;
+            temperatureContainer.appendChild(myThermometerIcon2); // Append the image element
+            temperatureContainer.insertAdjacentHTML('beforeend', `${avgTempDay1}°${currentTemperatureUnit}`);
+
+            const myThermometerHighIcon = new Image();
+            myThermometerHighIcon.src = thermometerHighIcon;
+
+            const temperatureHighDay1Container = document.getElementById('day1MaxTemperature');
+            temperatureHighDay1Container.textContent = ``;
+            temperatureHighDay1Container.appendChild(myThermometerHighIcon); // Append the image element
+            temperatureHighDay1Container.insertAdjacentHTML('beforeend', `${maxTempDay1}°${currentTemperatureUnit}`);
+
+            const myThermometerLowIcon = new Image();
+            myThermometerLowIcon.src = thermometerLowIcon;
+
+            const temperatureLowDay1Container = document.getElementById('day1MinTemperature');
+            temperatureLowDay1Container.textContent = ``;
+            temperatureLowDay1Container.appendChild(myThermometerLowIcon); // Append the image element
+            temperatureLowDay1Container.insertAdjacentHTML('beforeend', `${minTempDay1}°${currentTemperatureUnit}`);
+
+
             document.getElementById('day1Condition').textContent = 
             `${forecast.forecastday[1].day.condition.text}`;  
-            document.getElementById('day1ChanceOfRain').textContent = 
-            `Chance of Rain: ${forecast.forecastday[1].day.daily_chance_of_rain}%`;  
 
+            const myRainIcon2 = new Image();
+            myRainIcon2.src = rainIcon;
+
+            const day1ChanceofRainContainer = document.getElementById('day1ChanceOfRain');
+            day1ChanceofRainContainer.textContent = ""; // Clear existing content
+            day1ChanceofRainContainer.appendChild(myRainIcon2); // Append the water icon
+            day1ChanceofRainContainer.appendChild(document.createTextNode(`${forecast.forecastday[1].day.daily_chance_of_rain}%`)); // Append the precipitation text
 
             const iconUrlDay1 = 'https:' + forecast.forecastday[1].day.condition.icon;
             const iconDay1Element = document.createElement('img');
@@ -276,18 +346,53 @@ function updateDOMWithWeeklyForecast(place) {
             forecast.forecastday[2].day.mintemp_f;
 
             console.log(forecast.forecastday[2].date);
+
             document.getElementById("day2Date").textContent = 
             `${convertDate(forecast.forecastday[1].date)}`; 
-            document.getElementById('day2AvgTemperature').textContent = 
-            `Average Temperature: ${avgTempDay2}°${currentTemperatureUnit}`;  
-            document.getElementById('day2MaxTemperature').textContent = 
-            `High: ${maxTempDay2}°${currentTemperatureUnit}`;  
-            document.getElementById('day2MinTemperature').textContent = 
-            `Low: ${minTempDay2}°${currentTemperatureUnit}`;  
+
+            const myThermometerIcon3 = new Image();
+            myThermometerIcon3.src = thermometerIcon;
+
+            const temperatureDay2Container = document.getElementById('day2AvgTemperature');
+            temperatureDay2Container.textContent = ``;
+            temperatureDay2Container.appendChild(myThermometerIcon3); // Append the image element
+            temperatureDay2Container.insertAdjacentHTML('beforeend', `${avgTempDay2}°${currentTemperatureUnit}`);
+
+            const myThermometerHighIcon2 = new Image();
+            myThermometerHighIcon2.src = thermometerHighIcon;
+
+            const temperatureHighDay2Container = document.getElementById('day2MaxTemperature');
+            temperatureHighDay2Container.textContent = ``;
+            temperatureHighDay2Container.appendChild(myThermometerHighIcon2); // Append the image element
+            temperatureHighDay2Container.insertAdjacentHTML('beforeend', `${maxTempDay2}°${currentTemperatureUnit}`);
+
+            const myThermometerLowIcon2 = new Image();
+            myThermometerLowIcon2.src = thermometerLowIcon;
+
+            const temperatureLowDay2Container = document.getElementById('day2MinTemperature');
+            temperatureLowDay2Container.textContent = ``;
+            temperatureLowDay2Container.appendChild(myThermometerLowIcon2); // Append the image element
+            temperatureLowDay2Container.insertAdjacentHTML('beforeend', `${minTempDay2}°${currentTemperatureUnit}`);
+
+            //document.getElementById('day2MaxTemperature').textContent = 
+            //`High: ${maxTempDay2}°${currentTemperatureUnit}`;  
+//
+            //document.getElementById('day2MinTemperature').textContent = 
+            //`Low: ${minTempDay2}°${currentTemperatureUnit}`;  
+
             document.getElementById('day2Condition').textContent = 
             `${forecast.forecastday[2].day.condition.text}`;  
-            document.getElementById('day2ChanceOfRain').textContent = 
-            `Chance of Rain: ${forecast.forecastday[2].day.daily_chance_of_rain}%`;  
+
+            const myRainIcon3 = new Image();
+            myRainIcon3.src = rainIcon;
+
+            const day2ChanceofRainContainer = document.getElementById('day2ChanceOfRain');
+            day2ChanceofRainContainer.textContent = ""; // Clear existing content
+            day2ChanceofRainContainer.appendChild(myRainIcon3); // Append the water icon
+            day2ChanceofRainContainer.appendChild(document.createTextNode(`${forecast.forecastday[2].day.daily_chance_of_rain}%`)); // Append the precipitation text
+            
+            //document.getElementById('day2ChanceOfRain').textContent = 
+            //`Chance of Rain: ${forecast.forecastday[2].day.daily_chance_of_rain}%`;  
         };
     });
 }

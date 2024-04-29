@@ -70,12 +70,12 @@ body {
   }
 
   #locationName {
-    font-size: 44px;
+    font-size: 60px;
     font-weight: bold;
   }
 
   #locationCountry {
-    font-size: 36px;
+    font-size: 44px;
     text-transform: uppercase;
   }
 
@@ -101,11 +101,32 @@ body {
   #temperatureId > img,
   #precipitation_Id > img,
   #day0ChanceofRain > img,
-  #wind_Id > img {
+  #wind_Id > img,
+  #sunriseId > img,
+  #sunsetId > img,
+  #day1AvgTemperature > img,
+  #day2AvgTemperature > img,
+  #day1ChanceOfRain > img,
+  #day2ChanceOfRain > img,
+  #day1MaxTemperature > img,
+  #day1MinTemperature > img,
+  #day2MaxTemperature > img,
+  #day2MinTemperature > img,
+  .hourlyTemperatureClass > img,
+  .hourlyChanceOfRainClass > img,
+  .hourlyPrecipitationClass > img,
+  .hourlyWindClass > img {
     filter: invert(100%);
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     margin-right: 5px; 
+  }
+
+  #day0WeatherConditionId, 
+  #day1Condition,
+  #day2Condition,
+  .hourlyWeatherCondition {
+    text-transform: uppercase;
   }
     
   #weeklyForecast {
@@ -113,7 +134,31 @@ body {
     justify-content: space-between;
     margin-bottom: 20px;
   }
-   
+
+  .day-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  
+  .bottom-section {
+    display: flex;
+  }
+  
+  
+  .weather-icon-container,
+  .right-section {
+    margin-right: 10px;
+  }
+    
   .day-forecast {
     flex: 1;
     padding: 20px;
@@ -140,7 +185,7 @@ body {
   
   #hourlyForecastContainer > div {
     flex: 0 0 auto; /* Prevent flex items from growing or shrinking */
-    width: 100px; /* Set a fixed width for each hourly element */
+    width: 105px; /* Set a fixed width for each hourly element */
     height: 220px; /* Set a fixed height for each hourly element */
     padding: 10px;
     margin-right: 10px;
